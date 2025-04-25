@@ -22,16 +22,14 @@ export function constructRskScanUrl(
   chain: Chain,
   transactionHash: `0x${string}`,
 ) {
-  // For RSK mainnet
   if (chain.id === rskChain.id) {
-    return `https://explorer.rootstock.io//tx/${transactionHash}`;
+    return `https://explorer.rsk.co/tx/${transactionHash}`;
   }
 
-  // For RSK testnet
   if (chain.id === 31) {
-    return `https://explorer.testnet.rootstock.io/tx/${transactionHash}`;
+    return `https://explorer.testnet.rsk.co/tx/${transactionHash}`;
   }
 
-  // Default to testnet
-  return `https://explorer.testnet.rootstock.io/tx/${transactionHash}`;
+  // Default to mainnet
+  return `https://explorer.rsk.co/tx/${transactionHash}`;
 }

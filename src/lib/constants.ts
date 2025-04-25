@@ -1,4 +1,4 @@
-// USDC on RSK Mainnet
+// USDC on RSK
 export const USDC_ADDRESS = "0x1Db2466d9F5e10D7090E7152B68d62703a2245F0";
 export const USDC_DECIMALS = 18;
 
@@ -6,7 +6,7 @@ export const USDC_DECIMALS = 18;
 export const RSK_RPC_URL = "https://public-node.rsk.co";
 export const RSK_CHAIN_ID = 30;
 
-// RSK Chain Configuration
+// RSK Chain Configuration 
 export const rskChain = {
   id: RSK_CHAIN_ID,
   name: 'RSK Mainnet',

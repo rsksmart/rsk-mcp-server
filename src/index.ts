@@ -7,31 +7,29 @@ import {
 import { version } from "./version.js";
 import * as dotenv from "dotenv";
 import { mnemonicToAccount } from "viem/accounts";
-import { polygon } from "viem/chains";
+import { polygon, rskChain } from "viem/chains";
 import { createWalletClient, http, publicActions } from "viem";
 import { polygonMcpTools, toolToHandler } from "./tools/index.js";
-import { POLYGON_RPC_URL } from "./lib/constants.js";
+import { POLYGON_RPC_URL, RSK_RPC_URL } from "./lib/constants.js";
 
 async function main() {
   dotenv.config();
   const seedPhrase = process.env.SEED_PHRASE;
 
   if (!seedPhrase) {
-    console.error(
-      "Please set SEED_PHRASE environment variable",
-    );
+    console.error("Please set SEED_PHRASE environment variable");
     process.exit(1);
   }
 
   const viemClient = createWalletClient({
     account: mnemonicToAccount(seedPhrase),
-    chain: polygon,
-    transport: http(POLYGON_RPC_URL),
+    chain: rskChain,
+    transport: http(RSK_RPC_URL),
   }).extend(publicActions);
 
   const server = new Server(
     {
-      name: "Polygon MCP Server",
+      name: "RSK MCP Server",
       version,
     },
     {
@@ -73,7 +71,7 @@ async function main() {
   const transport = new StdioServerTransport();
   console.error("Connecting server to transport...");
   await server.connect(transport);
-  console.error("Polygon MCP Server running on stdio");
+  console.error("RSK MCP Server running on stdio");
 }
 
 main().catch((error) => {

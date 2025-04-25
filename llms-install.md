@@ -1,19 +1,19 @@
-# Polygon MCP Server Installation Guide for LLMs
+# RSK MCP Server Installation Guide for LLMs
 
-This guide provides step-by-step instructions for LLM agents like Cline to install and configure the Polygon MCP Server.
+This guide provides step-by-step instructions for LLM agents like Cline to install and configure the RSK MCP Server.
 
 ## Prerequisites
 
 - Node.js v16 or higher
-- npm or yarn package manager
-- A seed phrase for Ethereum wallet access
+- npm or yarn package manager 
+- A seed phrase for RSK wallet access
 
 ## Installation Steps
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Dablclub/polygon-mcp.git
-cd polygon-mcp
+git clone https://github.com/Dablclub/rootstock-mcp.git
+cd rootstock-mcp
 ```
 
 2. Install dependencies:
@@ -44,7 +44,7 @@ For VSCode Claude extension:
 ```json
 {
   "mcpServers": {
-    "polygon": {
+    "rootstock": {
       "command": "node",
       "args": ["PATH_TO_REPO/build/index.js"],
       "env": {
@@ -69,33 +69,33 @@ node generate-seed.js
 
 ## Available Tools
 
-The Polygon MCP Server provides the following tools:
+The RSK MCP Server provides the following tools:
 
-1. `call_contract`: Call a contract function on Polygon PoS
+1. `call_contract`: Call a contract function on RSK Network
    - Parameters:
      - `contractAddress`: The address of the contract to call
      - `functionName`: The name of the function to call
      - `functionArgs`: The arguments to pass to the function
      - `abi`: The ABI of the contract
 
-2. `erc20_balance`: Get the balance of an ERC20 token on Polygon PoS
+2. `erc20_balance`: Get the balance of an ERC20 token on RSK Network
    - Parameters:
      - `contractAddress`: The address of the contract to get the balance of
 
-3. `erc20_transfer`: Transfer an ERC20 token on Polygon PoS
+3. `erc20_transfer`: Transfer an ERC20 token on RSK Network
    - Parameters:
      - `contractAddress`: The address of the contract to transfer the token from
      - `toAddress`: The address of the recipient
      - `amount`: The amount of tokens to transfer
 
-4. `get_gas_price`: Get the current gas price on Polygon PoS
+4. `get_gas_price`: Get the current gas price on RSK Network
    - No parameters required
 
 ## Troubleshooting
 
 - If you encounter errors related to missing dependencies, try running `npm install` again.
 - If the server fails to start, check that your seed phrase is correctly formatted in the `.env` file.
-- For connection issues to the Polygon network, verify your internet connection and try again.
+- For connection issues to the RSK network, verify your internet connection and try again.
 
 ## Security Notes
 

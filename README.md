@@ -1,6 +1,6 @@
-# Rootstock MCP Server
+# RSK MCP Server
 
-A Model Context Protocol (MCP) server that provides onchain tools for Cursor, Claude AI, among others. Allowing it to interact with the Rootstock (RSK) blockchain.
+A Model Context Protocol (MCP) server that provides onchain tools for Claude AI, allowing it to interact with the RSK blockchain.
 
 ## Features
 
@@ -45,26 +45,6 @@ npm start
 
 ### Using with Claude
 
-To use this MCP server with Claude, you need to add it to your MCP settings file:
-
-For VSCode Claude extension:
-```json
-{
-  "mcpServers": {
-    "rsk": {
-      "command": "node",
-      "args": ["/path/to/rootstock-mcp/build/index.js"],
-      "env": {
-        "SEED_PHRASE": "your twelve word seed phrase here"
-      },
-      "disabled": false,
-      "autoApprove": []
-    }
-  }
-}
-```
-
-For Claude desktop app:
 ```json
 {
   "mcpServers": {
