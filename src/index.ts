@@ -17,7 +17,9 @@ async function main() {
   const seedPhrase = process.env.SEED_PHRASE;
 
   if (!seedPhrase) {
-    console.error("Please set SEED_PHRASE environment variable");
+    console.error(
+      "Please set SEED_PHRASE environment variable in your .env file"
+    );
     process.exit(1);
   }
 
