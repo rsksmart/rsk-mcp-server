@@ -1,6 +1,6 @@
 # Rootstock MCP Server
 
-A Model Context Protocol (MCP) server that provides onchain tools for Claude AI, allowing it to interact with the Rootstock (RSK) blockchain.
+A Model Context Protocol (MCP) server that provides onchain tools for Cursor, Claude AI, among others. Allowing it to interact with the Rootstock (RSK) blockchain.
 
 ## Features
 
