@@ -1,5 +1,3 @@
-// Polygon PoS specific types
-
 export type TokenNetwork = {
   name: string;
   display_name: string;

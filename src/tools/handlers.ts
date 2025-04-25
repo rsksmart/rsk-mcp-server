@@ -19,8 +19,8 @@ import type {
   Erc20BalanceSchema,
   Erc20TransferSchema,
 } from "./schemas.js";
-import { constructPolygonScanUrl } from "../utils/index.js";
-import { polygon } from "viem/chains";
+import { constructRskScanUrl } from "../utils/index.js";
+import { rootstock } from "viem/chains";
 import { PropertyNFT } from "../contracts/PropertyNFT.js";
 import { PropertyToken } from "../contracts/PropertyToken.js";
 import { PropertyYieldVault } from "../contracts/PropertyYieldVault.js";
@@ -39,10 +39,10 @@ export async function deployPropertyNFTHandler(
     bytecode: PropertyNFT.bytecode as `0x${string}`,
   });
 
-  // Return transaction hash and PolygonScan URL
+  // Return transaction hash and RootstockScan URL
   return JSON.stringify({
     hash,
-    url: constructPolygonScanUrl(wallet.chain ?? polygon, hash),
+    url: constructRskScanUrl(wallet.chain ?? rootstock, hash),
   });
 }
 
@@ -72,10 +72,10 @@ export async function deployPropertyTokenHandler(
     ],
   });
 
-  // Return transaction hash and PolygonScan URL
+  // Return transaction hash and RootstockScan URL
   return JSON.stringify({
     hash,
-    url: constructPolygonScanUrl(wallet.chain ?? polygon, hash),
+    url: constructRskScanUrl(wallet.chain ?? rootstock, hash),
   });
 }
 
@@ -109,10 +109,10 @@ export async function deployPropertyYieldVaultHandler(
     ],
   });
 
-  // Return transaction hash and PolygonScan URL
+  // Return transaction hash and RootstockScan URL
   return JSON.stringify({
     hash,
-    url: constructPolygonScanUrl(wallet.chain ?? polygon, hash),
+    url: constructRskScanUrl(wallet.chain ?? rootstock, hash),
   });
 }
 
@@ -176,7 +176,7 @@ export async function callContractHandler(
 
   return JSON.stringify({
     hash: txHash,
-    url: constructPolygonScanUrl(wallet.chain ?? polygon, txHash),
+    url: constructRskScanUrl(wallet.chain ?? rootstock, txHash),
   });
 }
 
@@ -243,7 +243,7 @@ export async function erc20TransferHandler(
 
   return JSON.stringify({
     hash: txHash,
-    url: constructPolygonScanUrl(wallet.chain ?? polygon, txHash),
+    url: constructRskScanUrl(wallet.chain ?? rootstock, txHash),
   });
 }
 

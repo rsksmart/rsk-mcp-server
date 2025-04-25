@@ -7,10 +7,10 @@ import {
 import { version } from "./version.js";
 import * as dotenv from "dotenv";
 import { mnemonicToAccount } from "viem/accounts";
-import { polygon, rskChain } from "viem/chains";
+import { rootstock, rootstockTestnet } from "viem/chains";
 import { createWalletClient, http, publicActions } from "viem";
-import { polygonMcpTools, toolToHandler } from "./tools/index.js";
-import { POLYGON_RPC_URL, RSK_RPC_URL } from "./lib/constants.js";
+import { rskMcpTools, toolToHandler } from "./tools/index.js";
+import { RSK_RPC_URL } from "./lib/constants.js";
 
 async function main() {
   dotenv.config();
@@ -23,7 +23,7 @@ async function main() {
 
   const viemClient = createWalletClient({
     account: mnemonicToAccount(seedPhrase),
-    chain: rskChain,
+    chain: rootstock,
     transport: http(RSK_RPC_URL),
   }).extend(publicActions);
 
@@ -42,7 +42,7 @@ async function main() {
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     console.error("Received ListToolsRequest");
     return {
-      tools: polygonMcpTools,
+      tools: rskMcpTools,
     };
   });
 

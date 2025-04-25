@@ -42,7 +42,7 @@ const callContractTool: Tool = {
 
 const erc20BalanceTool: Tool = {
   name: "erc20_balance",
-  description: "Get the balance of an ERC20 token on Polygon PoS",
+  description: "Get the balance of an ERC20 token on Rootstock",
   inputSchema: {
     type: "object",
     properties: {
@@ -57,7 +57,7 @@ const erc20BalanceTool: Tool = {
 
 const erc20TransferTool: Tool = {
   name: "erc20_transfer",
-  description: "Transfer an ERC20 token on Polygon PoS",
+  description: "Transfer an ERC20 token on Rootstock",
   inputSchema: {
     type: "object",
     properties: {
@@ -98,7 +98,7 @@ const getAddressTool: Tool = {
 
 const deployPropertyNFTTool: Tool = {
   name: "deploy_property_nft",
-  description: "Deploy a PropertyNFT contract on Polygon PoS",
+  description: "Deploy a PropertyNFT contract on Rootstock",
   inputSchema: {
     type: "object",
     properties: {},
@@ -107,7 +107,7 @@ const deployPropertyNFTTool: Tool = {
 
 const deployPropertyTokenTool: Tool = {
   name: "deploy_property_token",
-  description: "Deploy a PropertyToken contract on Polygon PoS",
+  description: "Deploy a PropertyToken contract on Rootstock",
   inputSchema: {
     type: "object",
     properties: {
@@ -134,7 +134,7 @@ const deployPropertyTokenTool: Tool = {
 
 const deployPropertyYieldVaultTool: Tool = {
   name: "deploy_property_yield_vault",
-  description: "Deploy a PropertyYieldVault contract on Polygon PoS",
+  description: "Deploy a PropertyYieldVault contract on Rootstock",
   inputSchema: {
     type: "object",
     properties: {

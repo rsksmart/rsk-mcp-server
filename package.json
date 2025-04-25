@@ -1,7 +1,7 @@
 {
-  "name": "polygon-mcp",
+  "name": "rootstock-mcp",
   "version": "1.0.0",
-  "description": "A Model Context Protocol (MCP) server that provides onchain tools for Claude AI, allowing it to interact with the Polygon PoS blockchain",
+  "description": "A Model Context Protocol (MCP) for Rootstock network",
   "bin": "./build/index.js",
   "type": "module",
   "scripts": {
@@ -17,21 +17,21 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/polygon-mcp"
+    "url": "https://github.com/rsksmart/rsk-mcp-server"
   },
   "keywords": [
     "mcp",
     "claude",
-    "polygon",
+    "rootstock",
+    "cursor",
     "matic",
     "blockchain",
     "ethereum",
     "web3",
     "ai"
   ],
-  "author": "Your Name",
+  "author": "Sebastian Guaqueta",
   "license": "MIT",
-  "packageManager": "yarn@4.5.1",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.1",
     "dotenv": "^16.4.7",
