@@ -1,5 +1,5 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/rsksmart/rsk-mcp-server/badge)](https://scorecard.dev/viewer/?uri=github.com/rsksmart/rsk-mcp-server)
-[![CodeQL](https://github.com/rsksmart/rskj/workflows/CodeQL/badge.svg)](https://github.com/rsksmart/rsk-mcp-server/actions?query=workflow%3ACodeQL)
+[![CodeQL](https://github.com/rsksmart/rsk-mcp-server/workflows/CodeQL/badge.svg)](https://github.com/rsksmart/rsk-mcp-server/actions?query=workflow%3ACodeQL)
 <img src="img/rootstock-docs.png" alt="Rootstock Logo" style="width:100%; height: auto;" />
 
 # Rootstock MCP Server
