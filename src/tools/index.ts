@@ -12,7 +12,7 @@ import {
 
 const callContractTool: Tool = {
   name: "call_contract",
-  description: "Call a contract function on RSK Network",
+  description: "Call a contract function on Rootstock Network",
   inputSchema: {
     type: "object",
     properties: {
@@ -80,7 +80,7 @@ const erc20TransferTool: Tool = {
 
 const getGasPriceTool: Tool = {
   name: "get_gas_price",
-  description: "Get the current gas price on RSK Network",
+  description: "Get the current gas price on Rootstock Network",
   inputSchema: {
     type: "object",
     properties: {},

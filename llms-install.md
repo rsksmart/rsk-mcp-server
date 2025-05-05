@@ -1,12 +1,12 @@
-# RSK MCP Server Installation Guide for LLMs
+# Rootstock MCP Server Installation Guide for LLMs
 
-This guide provides step-by-step instructions for LLM agents like Cline to install and configure the RSK MCP Server.
+This guide provides step-by-step instructions for LLM agents like Cline to install and configure the Rootstock MCP Server.
 
 ## Prerequisites
 
 - Node.js v16 or higher
 - npm or yarn package manager 
-- A seed phrase for RSK wallet access
+- A seed phrase for Rootstock wallet access
 
 ## Installation Steps
 
@@ -69,33 +69,33 @@ node generate-seed.js
 
 ## Available Tools
 
-The RSK MCP Server provides the following tools:
+The Rootstock MCP Server provides the following tools:
 
-1. `call_contract`: Call a contract function on RSK Network
+1. `call_contract`: Call a contract function on Rootstock Network
    - Parameters:
      - `contractAddress`: The address of the contract to call
      - `functionName`: The name of the function to call
      - `functionArgs`: The arguments to pass to the function
      - `abi`: The ABI of the contract
 
-2. `erc20_balance`: Get the balance of an ERC20 token on RSK Network
+2. `erc20_balance`: Get the balance of an ERC20 token on Rootstock Network
    - Parameters:
      - `contractAddress`: The address of the contract to get the balance of
 
-3. `erc20_transfer`: Transfer an ERC20 token on RSK Network
+3. `erc20_transfer`: Transfer an ERC20 token on Rootstock Network
    - Parameters:
      - `contractAddress`: The address of the contract to transfer the token from
      - `toAddress`: The address of the recipient
      - `amount`: The amount of tokens to transfer
 
-4. `get_gas_price`: Get the current gas price on RSK Network
+4. `get_gas_price`: Get the current gas price on Rootstock Network
    - No parameters required
 
 ## Troubleshooting
 
 - If you encounter errors related to missing dependencies, try running `npm install` again.
 - If the server fails to start, check that your seed phrase is correctly formatted in the `.env` file.
-- For connection issues to the RSK network, verify your internet connection and try again.
+- For connection issues to the Rootstock network, verify your internet connection and try again.
 
 ## Security Notes
 

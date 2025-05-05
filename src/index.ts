@@ -31,7 +31,7 @@ async function main() {
 
   const server = new Server(
     {
-      name: "RSK MCP Server",
+      name: "Rootstock MCP Server",
       version,
     },
     {
@@ -73,7 +73,7 @@ async function main() {
   const transport = new StdioServerTransport();
   console.error("Connecting server to transport...");
   await server.connect(transport);
-  console.error("RSK MCP Server running on stdio");
+  console.error("Rootstock MCP Server running on stdio");
 }
 
 main().catch((error) => {
