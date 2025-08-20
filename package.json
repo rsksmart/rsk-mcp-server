@@ -37,7 +37,7 @@
     "build"
   ],
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.13.2",
+    "@modelcontextprotocol/sdk": "^1.17.3",
     "@rsksmart/rsk-cli": "^1.1.0",
     "@types/inquirer": "^9.0.8",
     "inquirer": "^12.7.0",
