@@ -36,6 +36,7 @@ export function provideResponse(
   type: ResponseType
 ): MCPResponse {
   const text = responseText(content, type);
+  const isError = (type as string).startsWith("error");
   return {
     content: [
       {
@@ -43,6 +44,7 @@ export function provideResponse(
         text: text as string,
       },
     ],
+    ...(isError && { isError: true }),
   };
 }
 

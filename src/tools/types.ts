@@ -16,6 +16,7 @@ export type MCPResponse = {
     type: "text";
     text: string;
   }[];
+  isError?: boolean;
 };
 
 export enum ResponseType {
@@ -58,4 +59,21 @@ export enum ResponseType {
   ErrorRetrievingHistory = "errorRetrievingHistory",
   ContractDeploymentConfirmation = "contractDeploymentConfirmation",
   TransferConfirmation = "transferConfirmation",
+  
+  AttestationIssuedSuccessfully = "attestationIssuedSuccessfully",
+  ErrorIssuingAttestation = "errorIssuingAttestation",
+  AttestationVerifiedSuccessfully = "attestationVerifiedSuccessfully",
+  ErrorVerifyingAttestation = "errorVerifyingAttestation",
+  AttestationRevokedSuccessfully = "attestationRevokedSuccessfully",
+  ErrorRevokingAttestation = "errorRevokingAttestation",
+  AttestationsListedSuccessfully = "attestationsListedSuccessfully",
+  ErrorListingAttestations = "errorListingAttestations",
+  SchemaCreatedSuccessfully = "schemaCreatedSuccessfully",
+  ErrorCreatingSchema = "errorCreatingSchema",
+  DeploymentAttestedSuccessfully = "deploymentAttestedSuccessfully",
+  ErrorAttestingDeployment = "errorAttestingDeployment",
+  VerificationAttestedSuccessfully = "verificationAttestedSuccessfully",
+  ErrorAttestingVerification = "errorAttestingVerification",
+  TransferAttestedSuccessfully = "transferAttestedSuccessfully",
+  ErrorAttestingTransfer = "errorAttestingTransfer",
 }

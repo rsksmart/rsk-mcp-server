@@ -16,6 +16,9 @@
 - ✅ **Contract Verification**: Verify deployed contracts
 - 📄 **Contract Interaction**: Read data from verified contracts
 - 📊 **History**: Query transaction history
+- 🎯 **Attestations**: Create, verify, and manage attestations using RAS (Rootstock Attestation Service)
+- 🏗️ **Schema Management**: Create and manage attestation schemas
+- 📝 **Attestation Queries**: List and filter attestations by various criteria
 
 ## 📋 Prerequisites
 
@@ -411,12 +414,149 @@ You can continue the flow according to what you need to do.
 #### Rootstock Mainnet
 - **RPC URL:** `https://public-node.rsk.co`
 - **Chain ID:** 30
-- **Explorer:** `https://explorer.rsk.co`
+- **Explorer:** `https://explorer.rootstock.io`
 
-#### Rootstock Testnet  
+#### Rootstock Testnet
 - **RPC URL:** `https://public-node.testnet.rsk.co`
 - **Chain ID:** 31
-- **Explorer:** `https://explorer.testnet.rsk.co`
+- **Explorer:** `https://explorer.testnet.rootstock.io`
+
+### 8. 🎯 Attestation Management
+
+#### Available Attestation Tools:
+- `issue-attestation`: Create new attestations with a raw schema and encoded data
+- `verify-attestation`: Verify existing attestations by UID
+- `revoke-attestation`: Revoke attestations
+- `list-attestations`: Query attestations by event logs (requires custom RPC URL)
+- `create-schema`: Register new attestation schemas
+- `attest-deployment`: Create a deployment attestation using the RAS default schema
+- `attest-verification`: Create a contract verification attestation using the RAS default schema
+- `attest-transfer`: Create a transfer attestation using the RAS default schema
+
+**🎯 Issue Attestation**
+```typescript
+{
+  testnet: true,
+  recipient: "0x...", // recipient address
+  schema: "0x...", // schema UID
+  data: "encoded_data", // schema-encoded data
+  expirationTime: 0, // optional timestamp
+  revocable: true // optional
+}
+```
+
+**🔍 Verify Attestation**
+```typescript
+{
+  testnet: true,
+  uid: "0x..." // attestation UID
+}
+```
+
+**❌ Revoke Attestation**
+```typescript
+{
+  testnet: true,
+  uid: "0x...", // attestation UID
+  walletData: {}, // wallet configuration
+  walletPassword: "password"
+}
+```
+
+**📋 List Attestations**
+
+> **Note:** RSK public nodes do not support `eth_getLogs`. A custom `rpcUrl` from a provider such as Alchemy or GetBlock is required.
+
+```typescript
+{
+  testnet: true,
+  rpcUrl: "https://rsk-mainnet.g.alchemy.com/v2/YOUR_KEY", // required
+  recipient: "0x...", // optional filter
+  attester: "0x...", // optional filter
+  schema: "0x...", // optional filter
+  limit: 10 // optional, default 10
+}
+```
+
+**🏗️ Create Schema**
+```typescript
+{
+  testnet: true,
+  schema: "uint256 tokenId, string name", // schema definition
+  revocable: true,
+  resolverAddress: "0x...", // optional, defaults to zero address
+  walletData: {}, // wallet configuration
+  walletPassword: "password"
+}
+```
+
+**🏗️ Attest Deployment**
+
+Creates a deployment attestation using the RAS default deployment schema. Uses `DEFAULT_SCHEMA_UIDS.testnet.deployment` when no `schemaUID` is provided.
+
+```typescript
+{
+  testnet: true,
+  contractAddress: "0x...",
+  contractName: "MyContract",
+  deployer: "0x...",
+  blockNumber: 1000000,
+  transactionHash: "0x...",
+  timestamp: 1700000000,
+  abiHash: "0x...", // optional
+  bytecodeHash: "0x...", // optional
+  schemaUID: "0x...", // optional, uses default RAS schema
+  recipient: "0x...", // optional
+  walletData: {}, // wallet configuration
+  walletPassword: "password"
+}
+```
+
+**✅ Attest Verification**
+
+Creates a contract verification attestation using the RAS default verification schema.
+
+```typescript
+{
+  testnet: true,
+  contractAddress: "0x...",
+  contractName: "MyContract",
+  verifier: "0x...",
+  sourceCodeHash: "0x...",
+  compilationTarget: "contracts/MyContract.sol:MyContract",
+  compilerVersion: "v0.8.17+commit.8df45f5f",
+  optimizationUsed: true,
+  timestamp: 1700000000,
+  verificationTool: "hardhat",
+  schemaUID: "0x...", // optional, uses default RAS schema
+  recipient: "0x...", // optional
+  walletData: {}, // wallet configuration
+  walletPassword: "password"
+}
+```
+
+**💸 Attest Transfer**
+
+Creates a transfer attestation using the RAS default transfer schema.
+
+```typescript
+{
+  testnet: true,
+  sender: "0x...",
+  recipient: "0x...",
+  amount: "0.001",
+  tokenSymbol: "RBTC", // optional, defaults to RBTC
+  tokenAddress: "0x...", // optional, for ERC20
+  transactionHash: "0x...",
+  blockNumber: 1000000,
+  timestamp: 1700000000,
+  transferType: "native", // e.g. "native" or "erc20"
+  reason: "payment", // optional
+  schemaUID: "0x...", // optional, uses default RAS schema
+  walletData: {}, // wallet configuration
+  walletPassword: "password"
+}
+```
 
 ## 📁 Project Structure
 
@@ -425,6 +565,14 @@ rsk-mcp-server/
 ├── src/
 │   ├── handlers/
 │   │   └── responsesHandler.ts    # MCP response handling
+│   ├── services/
+│   │   ├── AttestationService.ts  # Attestation operations
+│   │   ├── ContractDeploymentService.ts # Contract deployment
+│   │   ├── ContractReadService.ts # Contract reading
+│   │   ├── ContractVerificationService.ts # Contract verification
+│   │   ├── HistoryService.ts      # Transaction history
+│   │   ├── TransferService.ts     # Token transfers
+│   │   └── WalletService.ts       # Wallet management
 │   ├── tools/
 │   │   ├── constants.ts           # Constants and options
 │   │   ├── handlers.ts            # Auxiliary handlers
@@ -432,12 +580,15 @@ rsk-mcp-server/
 │   │   └── types.ts               # TypeScript types
 │   ├── utils/
 │   │   └── responses.ts           # Response utilities
+│   ├── server-config.ts           # MCP server configuration
 │   ├── index.ts                   # Main entry point
-│   └── types.d.ts                 # Type declarations
+│   └── rsk-cli.d.ts               # Ambient type declarations for rsk-cli
+├── scripts/
+│   └── test-attestations.mjs      # Attestation integration tests
 ├── build/                         # Compiled code (generated)
-├── package.json                  # Project configuration
-├── tsconfig.json                 # TypeScript configuration
-└── README.md                     # This documentation
+├── package.json                   # Project configuration
+├── tsconfig.json                  # TypeScript configuration
+└── README.md                      # This documentation
 ```
 
 ## 🔐 Security
