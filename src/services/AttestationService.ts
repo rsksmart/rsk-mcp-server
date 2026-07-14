@@ -672,6 +672,8 @@ export class AttestationService {
         };
       }
 
+      const tokenSymbol = params.tokenSymbol || (params.tokenAddress ? "" : "RBTC");
+
       const uid = await submitAttestation(
         signer,
         params.testnet,
@@ -682,7 +684,7 @@ export class AttestationService {
           { name: "recipient", value: params.recipient, type: "address" },
           { name: "amount", value: params.amount, type: "string" },
           { name: "tokenAddress", value: params.tokenAddress || "0x0000000000000000000000000000000000000000", type: "address" },
-          { name: "tokenSymbol", value: params.tokenSymbol || "RBTC", type: "string" },
+          { name: "tokenSymbol", value: tokenSymbol, type: "string" },
           { name: "transactionHash", value: params.transactionHash, type: "bytes32" },
           { name: "blockNumber", value: params.blockNumber, type: "uint256" },
           { name: "timestamp", value: params.timestamp, type: "uint256" },
@@ -708,7 +710,7 @@ export class AttestationService {
           sender: params.sender,
           recipient: params.recipient,
           amount: params.amount,
-          tokenSymbol: params.tokenSymbol || "RBTC",
+          tokenSymbol,
           viewUrl: getEasViewerUrl(uid, params.testnet)
         },
         responseType: "TransferAttestedSuccessfully"

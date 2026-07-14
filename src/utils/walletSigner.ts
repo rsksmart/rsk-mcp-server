@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
-import { WalletData, WalletItem } from "../tools/types.js";
+import type { WalletData, WalletItem } from "../tools/types.js";
 
 export interface WalletSignerOptions {
   testnet?: boolean;
