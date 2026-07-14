@@ -1,11 +1,11 @@
 import {
   RSK_ATTESTATION_CONFIG,
   DEFAULT_SCHEMA_UIDS,
-  createDeploymentAttestation,
-  createVerificationAttestation,
-  createTransferAttestation,
-} from "@rsksmart/rsk-cli/dist/src/utils/attestation.js";
-import { createAttestationSigner } from "@rsksmart/rsk-cli/dist/src/utils/walletSigner.js";
+  DEPLOYMENT_SCHEMA,
+  VERIFICATION_SCHEMA,
+  TRANSFER_SCHEMA,
+} from "../utils/attestationConstants.js";
+import { createAttestationSigner } from "../utils/walletSigner.js";
 import { WalletData } from "../tools/types.js";
 import { ethers } from "ethers";
 import { createRequire } from "module";
@@ -130,6 +130,38 @@ function initializeEAS(contractAddress: string, runner: ethers.ContractRunner) {
   const eas = new EAS(contractAddress);
   eas.connect(runner);
   return eas;
+}
+
+async function submitAttestation(
+  signer: ethers.Signer,
+  testnet: boolean,
+  schemaUID: string,
+  schemaDefinition: string,
+  fields: { name: string; value: any; type: string }[],
+  recipient: string
+): Promise<string | null> {
+  try {
+    const config = testnet ? RSK_ATTESTATION_CONFIG.testnet : RSK_ATTESTATION_CONFIG.mainnet;
+    const eas = initializeEAS(config.contractAddress, signer);
+
+    const easSdk = require("@ethereum-attestation-service/eas-sdk");
+    const schemaEncoder = new easSdk.SchemaEncoder(schemaDefinition);
+    const encodedData = schemaEncoder.encodeData(fields);
+
+    const tx = await eas.attest({
+      schema: schemaUID as `0x${string}`,
+      data: {
+        recipient: recipient as `0x${string}`,
+        expirationTime: 0n,
+        revocable: true,
+        data: encodedData
+      }
+    });
+
+    return await tx.wait();
+  } catch {
+    return null;
+  }
 }
 
 export class AttestationService {
@@ -485,24 +517,24 @@ export class AttestationService {
         };
       }
 
-      const deploymentData = {
-        contractAddress: params.contractAddress,
-        contractName: params.contractName,
-        deployer: params.deployer,
-        blockNumber: params.blockNumber,
-        transactionHash: params.transactionHash,
-        timestamp: params.timestamp,
-        abiHash: params.abiHash,
-        bytecodeHash: params.bytecodeHash,
-      };
-
-      const uid = await createDeploymentAttestation(signer, deploymentData, {
-        testnet: params.testnet,
-        recipient: params.recipient,
+      const uid = await submitAttestation(
+        signer,
+        params.testnet,
         schemaUID,
-        enabled: true,
-        isExternal: true,
-      });
+        DEPLOYMENT_SCHEMA,
+        [
+          { name: "contractName", value: params.contractName, type: "string" },
+          { name: "contractAddress", value: params.contractAddress, type: "address" },
+          { name: "deployer", value: params.deployer, type: "address" },
+          { name: "blockNumber", value: params.blockNumber, type: "uint256" },
+          { name: "transactionHash", value: params.transactionHash, type: "bytes32" },
+          { name: "timestamp", value: params.timestamp, type: "uint256" },
+          { name: "abiHash", value: params.abiHash || "", type: "string" },
+          { name: "bytecodeHash", value: params.bytecodeHash || "", type: "string" },
+          { name: "version", value: "1.0", type: "string" }
+        ],
+        params.recipient || params.contractAddress
+      );
 
       if (!uid) {
         return {
@@ -561,25 +593,26 @@ export class AttestationService {
         };
       }
 
-      const verificationData = {
-        contractAddress: params.contractAddress,
-        contractName: params.contractName,
-        verifier: params.verifier,
-        sourceCodeHash: params.sourceCodeHash,
-        compilationTarget: params.compilationTarget,
-        compilerVersion: params.compilerVersion,
-        optimizationUsed: params.optimizationUsed,
-        timestamp: params.timestamp,
-        verificationTool: params.verificationTool,
-      };
-
-      const uid = await createVerificationAttestation(signer, verificationData, {
-        testnet: params.testnet,
-        recipient: params.recipient,
+      const uid = await submitAttestation(
+        signer,
+        params.testnet,
         schemaUID,
-        enabled: true,
-        isExternal: true,
-      });
+        VERIFICATION_SCHEMA,
+        [
+          { name: "contractName", value: params.contractName, type: "string" },
+          { name: "contractAddress", value: params.contractAddress, type: "address" },
+          { name: "verifier", value: params.verifier, type: "address" },
+          { name: "sourceCodeHash", value: params.sourceCodeHash, type: "string" },
+          { name: "compilationTarget", value: params.compilationTarget, type: "string" },
+          { name: "compilerVersion", value: params.compilerVersion, type: "string" },
+          { name: "optimizationUsed", value: params.optimizationUsed, type: "bool" },
+          { name: "timestamp", value: params.timestamp, type: "uint256" },
+          { name: "verificationTool", value: params.verificationTool, type: "string" },
+          { name: "version", value: "1.0", type: "string" },
+          { name: "schemaVersion", value: "2.0", type: "string" }
+        ],
+        params.recipient || params.contractAddress
+      );
 
       if (!uid) {
         return {
@@ -639,25 +672,26 @@ export class AttestationService {
         };
       }
 
-      const transferData = {
-        sender: params.sender,
-        recipient: params.recipient,
-        amount: params.amount,
-        tokenAddress: params.tokenAddress,
-        tokenSymbol: params.tokenSymbol,
-        transactionHash: params.transactionHash,
-        blockNumber: params.blockNumber,
-        timestamp: params.timestamp,
-        reason: params.reason,
-        transferType: params.transferType,
-      };
-
-      const uid = await createTransferAttestation(signer, transferData, {
-        testnet: params.testnet,
+      const uid = await submitAttestation(
+        signer,
+        params.testnet,
         schemaUID,
-        enabled: true,
-        isExternal: true,
-      });
+        TRANSFER_SCHEMA,
+        [
+          { name: "sender", value: params.sender, type: "address" },
+          { name: "recipient", value: params.recipient, type: "address" },
+          { name: "amount", value: params.amount, type: "string" },
+          { name: "tokenAddress", value: params.tokenAddress || "0x0000000000000000000000000000000000000000", type: "address" },
+          { name: "tokenSymbol", value: params.tokenSymbol || "RBTC", type: "string" },
+          { name: "transactionHash", value: params.transactionHash, type: "bytes32" },
+          { name: "blockNumber", value: params.blockNumber, type: "uint256" },
+          { name: "timestamp", value: params.timestamp, type: "uint256" },
+          { name: "reason", value: params.reason || "", type: "string" },
+          { name: "transferType", value: params.transferType, type: "string" },
+          { name: "version", value: "1.0", type: "string" }
+        ],
+        params.recipient
+      );
 
       if (!uid) {
         return {
