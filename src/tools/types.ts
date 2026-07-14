@@ -5,7 +5,7 @@ export type WalletData = {
   currentWallet: string;
 };
 
-type WalletItem = {
+export type WalletItem = {
   address: string;
   encryptedPrivateKey: string;
   iv: string;
