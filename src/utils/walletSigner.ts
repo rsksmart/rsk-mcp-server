@@ -12,7 +12,7 @@ export interface WalletSignerOptions {
   password?: string;
 }
 
-const walletFilePath = path.join(process.cwd(), "rootstock-wallet.json");
+const walletFilePath = path.join(process.cwd(), "my-wallets.json");
 
 function getRpcUrl(testnet: boolean): string {
   return testnet
@@ -33,7 +33,10 @@ async function loadWalletData(options: WalletSignerOptions): Promise<WalletData>
 }
 
 function getWalletName(walletsData: WalletData, options: WalletSignerOptions): string {
-  if (options.walletName && walletsData.wallets[options.walletName]) {
+  if (options.walletName) {
+    if (!walletsData.wallets[options.walletName]) {
+      throw new Error(`Wallet "${options.walletName}" not found`);
+    }
     return options.walletName;
   }
 
