@@ -646,6 +646,14 @@ export class AttestationService {
 
   async processTransferAttestation(params: AttestTransferParams): Promise<AttestationServiceResult> {
     try {
+      if (params.tokenAddress && !params.tokenSymbol) {
+        return {
+          success: false,
+          error: "tokenSymbol is required when tokenAddress is provided.",
+          responseType: "ErrorAttestingTransfer"
+        };
+      }
+
       const network = params.testnet ? "testnet" : "mainnet";
       const schemaUID = params.schemaUID || DEFAULT_SCHEMA_UIDS[network].transfer;
       if (!schemaUID) {
@@ -672,7 +680,7 @@ export class AttestationService {
         };
       }
 
-      const tokenSymbol = params.tokenSymbol || (params.tokenAddress ? "TOKEN" : "RBTC");
+      const tokenSymbol = params.tokenSymbol || "RBTC";
 
       const uid = await submitAttestation(
         signer,

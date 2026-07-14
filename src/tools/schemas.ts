@@ -471,7 +471,7 @@ export const attestTransferSchema = z.object({
   tokenSymbol: z
     .string()
     .optional()
-    .describe("Token symbol (e.g., 'RBTC', 'RIF') - defaults to RBTC for native transfers; provide explicitly for token transfers"),
+    .describe("Token symbol (e.g., 'RBTC', 'RIF') - defaults to RBTC for native transfers; required when tokenAddress is provided"),
   transactionHash: z
     .string()
     .describe("Transfer transaction hash (0x... format, 32 bytes)"),
