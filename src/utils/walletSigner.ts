@@ -40,7 +40,7 @@ function getWalletName(walletsData: WalletData, options: WalletSignerOptions): s
     return options.walletName;
   }
 
-  if (!walletsData.currentWallet) {
+  if (!walletsData.currentWallet || !walletsData.wallets[walletsData.currentWallet]) {
     throw new Error("No current wallet set. Please select or create a wallet.");
   }
 

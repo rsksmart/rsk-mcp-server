@@ -672,7 +672,7 @@ export class AttestationService {
         };
       }
 
-      const tokenSymbol = params.tokenSymbol || (params.tokenAddress ? "" : "RBTC");
+      const tokenSymbol = params.tokenSymbol || (params.tokenAddress ? "TOKEN" : "RBTC");
 
       const uid = await submitAttestation(
         signer,
