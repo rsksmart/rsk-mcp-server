@@ -69,47 +69,23 @@ function decryptPrivateKey(wallet: WalletItem, password?: string): string {
     decryptedPrivateKey += decipher.final("utf8");
 
     return decryptedPrivateKey;
-  } catch (error) {
+  } catch {
     throw new Error("Failed to decrypt wallet private key. Please check your password.");
   }
 }
 
-async function canCreateSigner(options: WalletSignerOptions): Promise<boolean> {
-  try {
-    const walletsData = await loadWalletData(options);
-    const walletName = getWalletName(walletsData, options);
-    const wallet = walletsData.wallets[walletName];
-
-    if (!wallet?.encryptedPrivateKey || !wallet?.iv) {
-      return false;
-    }
-
-    if (!options.password) {
-      return false;
-    }
-
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function createSigner(options: WalletSignerOptions): Promise<ethers.Signer> {
+async function createSigner(options: WalletSignerOptions): Promise<ethers.Signer | null> {
   const walletsData = await loadWalletData(options);
 
   if (!walletsData.wallets) {
-    throw new Error("No wallets found in wallet data");
+    return null;
   }
 
   const walletName = getWalletName(walletsData, options);
   const wallet = walletsData.wallets[walletName];
 
-  if (!wallet) {
-    throw new Error(`Wallet "${walletName}" not found`);
-  }
-
-  if (!options.password) {
-    throw new Error("Password is required to decrypt wallet");
+  if (!wallet?.encryptedPrivateKey || !wallet?.iv || !options.password) {
+    return null;
   }
 
   const privateKey = decryptPrivateKey(wallet, options.password);
@@ -127,11 +103,6 @@ async function createSigner(options: WalletSignerOptions): Promise<ethers.Signer
  */
 export async function createAttestationSigner(options: WalletSignerOptions = {}): Promise<ethers.Signer | null> {
   try {
-    const canCreate = await canCreateSigner(options);
-    if (!canCreate) {
-      return null;
-    }
-
     return await createSigner(options);
   } catch {
     return null;

@@ -137,7 +137,7 @@ async function submitAttestation(
   testnet: boolean,
   schemaUID: string,
   schemaDefinition: string,
-  fields: { name: string; value: any; type: string }[],
+  fields: { name: string; value: unknown; type: string }[],
   recipient: string
 ): Promise<string | null> {
   try {
