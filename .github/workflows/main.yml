@@ -65,7 +65,6 @@ jobs:
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af #v4.1.0
         with:
           node-version: 22.22.2
-          check-latest: true
           registry-url: https://registry.npmjs.org
 
       - name: Clean install dependencies
