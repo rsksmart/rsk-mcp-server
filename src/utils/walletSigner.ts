@@ -2,12 +2,13 @@ import { ethers } from "ethers";
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
+import { WalletData, WalletItem } from "../tools/types.js";
 
 export interface WalletSignerOptions {
   testnet?: boolean;
   walletName?: string;
   isExternal?: boolean;
-  walletsData?: any;
+  walletsData?: WalletData;
   password?: string;
 }
 
@@ -19,7 +20,7 @@ function getRpcUrl(testnet: boolean): string {
     : "https://public-node.rsk.co";
 }
 
-async function loadWalletData(options: WalletSignerOptions): Promise<any> {
+async function loadWalletData(options: WalletSignerOptions): Promise<WalletData> {
   if (options.isExternal && options.walletsData) {
     return options.walletsData;
   }
@@ -31,7 +32,7 @@ async function loadWalletData(options: WalletSignerOptions): Promise<any> {
   return JSON.parse(fs.readFileSync(walletFilePath, "utf8"));
 }
 
-function getWalletName(walletsData: any, options: WalletSignerOptions): string {
+function getWalletName(walletsData: WalletData, options: WalletSignerOptions): string {
   if (options.walletName && walletsData.wallets[options.walletName]) {
     return options.walletName;
   }
@@ -43,7 +44,7 @@ function getWalletName(walletsData: any, options: WalletSignerOptions): string {
   return walletsData.currentWallet;
 }
 
-function decryptPrivateKey(wallet: any, password?: string): string {
+function decryptPrivateKey(wallet: WalletItem, password?: string): string {
   if (!wallet.encryptedPrivateKey || !wallet.iv) {
     throw new Error("Invalid wallet data: missing encryption information");
   }
@@ -80,7 +81,7 @@ async function canCreateSigner(options: WalletSignerOptions): Promise<boolean> {
       return false;
     }
 
-    if (options.isExternal && !options.password) {
+    if (!options.password) {
       return false;
     }
 
@@ -104,8 +105,8 @@ async function createSigner(options: WalletSignerOptions): Promise<ethers.Signer
     throw new Error(`Wallet "${walletName}" not found`);
   }
 
-  if (options.isExternal && !options.password) {
-    throw new Error("Password is required for external wallet operations");
+  if (!options.password) {
+    throw new Error("Password is required to decrypt wallet");
   }
 
   const privateKey = decryptPrivateKey(wallet, options.password);
