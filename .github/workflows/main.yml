@@ -144,6 +144,9 @@ jobs:
           VERSION=$(jq -r .version package.json)
           jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' server.json > server.tmp && mv server.tmp server.json
 
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
       - name: Install mcp-publisher
         env:
           # Pinned for reproducibility. If publishing ever fails with "invalid
@@ -154,7 +157,20 @@ jobs:
           set -euo pipefail
           OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
           ARCH="$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
-          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}/mcp-publisher_${OS}_${ARCH}.tar.gz" | tar xz mcp-publisher
+          ASSET="mcp-publisher_${OS}_${ARCH}.tar.gz"
+          BASE_URL="https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}"
+
+          curl -fsSLO "${BASE_URL}/${ASSET}"
+          curl -fsSLO "${BASE_URL}/${ASSET}.sigstore.json"
+
+          # Verify the release was built and signed by the registry repo's own
+          # release workflow (keyless Sigstore signing) before extracting it.
+          cosign verify-blob "${ASSET}" \
+            --bundle "${ASSET}.sigstore.json" \
+            --certificate-identity "https://github.com/modelcontextprotocol/registry/.github/workflows/release.yml@refs/tags/${MCP_PUBLISHER_VERSION}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+
+          tar xzf "${ASSET}" mcp-publisher
           test -x ./mcp-publisher
 
       - name: Authenticate to MCP Registry

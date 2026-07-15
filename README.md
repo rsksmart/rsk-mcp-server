@@ -285,7 +285,7 @@ You can continue the flow according to what you need to do.
 - `confirm-operation`: Confirm and execute a pending operation using its operation ID
 - `cancel-operation`: Cancel and discard a pending operation using its operation ID
 
-**Why confirmation is needed:** Critical operations like `deploy-contract` and `transfer-tokens` take a required `confirmAction` boolean. When it's omitted or `false`, the call creates a pending operation (expires after 5 minutes) instead of executing, and nothing happens on-chain until it's confirmed via `confirm-operation`. Passing `confirmAction: true` on the first call skips that pending step entirely — the tool descriptions themselves instruct AI agents not to do this until a real person has explicitly approved the action, so treat it as an escape hatch for already-approved automation, not the default flow.
+**Why confirmation is needed:** Critical operations like `deploy-contract` and `transfer-tokens` require a `confirmAction` boolean on every call — omitting it fails schema validation. Passing `confirmAction: false` creates a pending operation (expires after 5 minutes) instead of executing, and nothing happens on-chain until it's confirmed via `confirm-operation`. Passing `confirmAction: true` on the first call skips that pending step entirely — the tool descriptions themselves instruct AI agents not to do this until a real person has explicitly approved the action, so treat it as an escape hatch for already-approved automation, not the default flow.
 
 **List Pending Operations**
 ```typescript
@@ -401,7 +401,7 @@ You can continue the flow according to what you need to do.
 
 #### Tool: `transfer-tokens`
 
-Transfers rBTC or ERC20 tokens between wallets. Like `deploy-contract`, `confirmAction` is required: omit it or pass `false` to get back a pending operation that must be confirmed via `confirm-operation` before anything executes; pass `true` only once a real person has approved the transfer.
+Transfers rBTC or ERC20 tokens between wallets. Like `deploy-contract`, `confirmAction` is required on every call: pass `false` to get back a pending operation that must be confirmed via `confirm-operation` before anything executes; pass `true` only once a real person has approved the transfer.
 
 **Requirements:**
 - Recipient address
@@ -418,7 +418,7 @@ Transfers rBTC or ERC20 tokens between wallets. Like `deploy-contract`, `confirm
   tokenAddress: "0x...", // optional, omit for native rBTC transfers
   walletData: "my-wallets.json_content",
   walletPassword: "wallet_password",
-  confirmAction: false // omit or set false to require confirm-operation; true executes immediately
+  confirmAction: false // required on every call; false requires confirm-operation, true executes immediately
 }
 ```
 
