@@ -20,6 +20,37 @@
 - 🏗️ **Schema Management**: Create and manage attestation schemas
 - 📝 **Attestation Queries**: List and filter attestations by various criteria
 
+## 🧰 Available Tools
+
+This server exposes 22 MCP tools. You don't call these directly — once the MCP is connected, your AI client selects the right tool based on your prompt.
+
+| Category | Tool | Description |
+|---|---|---|
+| Session | `start-interaction` | Start interacting with the Rootstock CLI functions |
+| Session | `list-pending-operations` | List pending operations awaiting confirmation (deploys, transfers) |
+| Session | `confirm-operation` | Confirm and execute a pending operation by ID |
+| Session | `cancel-operation` | Cancel a pending operation by ID |
+| Wallet | `start-wallet-interaction` | Show available wallet management operations |
+| Wallet | `create-wallet` | Create, import, list, switch, or delete wallets |
+| Wallet | `use-wallet-from-creation` | Reuse wallet data from a previous `create-wallet` result without re-uploading it |
+| Balance | `check-balance` | Check rBTC or ERC20 token balances |
+| Transfers | `transfer-tokens` | Transfer rBTC or ERC20 tokens between wallets |
+| Transactions | `check-transaction` | Check a transaction's status and details by hash |
+| Transactions | `check-transaction-history` | Query a wallet's transaction history via the Alchemy API |
+| Contracts | `deploy-contract` | Deploy a smart contract using ABI and bytecode |
+| Contracts | `verify-contract` | Verify a deployed contract's source code |
+| Contracts | `read-contract` | Call view/pure functions on a verified contract |
+| Attestations | `issue-attestation` | Issue a new attestation via RAS (Rootstock Attestation Service) |
+| Attestations | `verify-attestation` | Verify an existing attestation by UID |
+| Attestations | `revoke-attestation` | Revoke an existing attestation by UID |
+| Attestations | `list-attestations` | Query attestations by event logs (requires a custom RPC URL) |
+| Attestations | `create-schema` | Register a new attestation schema |
+| Attestations | `attest-deployment` | Attest a contract deployment using the RAS default schema |
+| Attestations | `attest-verification` | Attest a contract verification using the RAS default schema |
+| Attestations | `attest-transfer` | Attest a token transfer using the RAS default schema |
+
+See [Detailed Functionality](#-detailed-functionality) below for parameters and examples.
+
 ## 📋 Prerequisites
 
 - **Node.js** v18 or higher
@@ -246,11 +277,41 @@ Which option interests you?
 
 You can continue the flow according to what you need to do.
 
-### 1. 💼 Wallet Management
+### 1. 🧭 Session & Interaction
+
+#### Available Tools:
+- `start-interaction`: Entry point tool — start here when a user first asks about Rootstock. Lists all available operations.
+- `list-pending-operations`: List operations awaiting confirmation (contract deployments, token transfers)
+- `confirm-operation`: Confirm and execute a pending operation using its operation ID
+- `cancel-operation`: Cancel and discard a pending operation using its operation ID
+
+**Why confirmation is needed:** Critical operations like `deploy-contract` and `transfer-tokens` require a `confirmAction` boolean on every call — omitting it fails schema validation. Passing `confirmAction: false` creates a pending operation (expires after 5 minutes) instead of executing, and nothing happens on-chain until it's confirmed via `confirm-operation`. Passing `confirmAction: true` on the first call skips that pending step entirely — the tool descriptions themselves instruct AI agents not to do this until a real person has explicitly approved the action, so treat it as an escape hatch for already-approved automation, not the default flow.
+
+**List Pending Operations**
+```typescript
+{} // no parameters
+```
+
+**Confirm an Operation**
+```typescript
+{
+  operationId: "op_1700000000000_abc123xyz" // ID returned when the operation was created
+}
+```
+
+**Cancel an Operation**
+```typescript
+{
+  operationId: "op_1700000000000_abc123xyz"
+}
+```
+
+### 2. 💼 Wallet Management
 
 #### Available Tools:
 - `start-wallet-interaction`: Initialize wallet management
 - `create-wallet`: Create/import/manage wallets
+- `use-wallet-from-creation`: Reuse wallet data from a previous `create-wallet` result without re-uploading it
 
 #### Supported Operations:
 
@@ -294,7 +355,17 @@ You can continue the flow according to what you need to do.
 }
 ```
 
-### 2. 💰 Balance Queries
+**♻️ Reuse Wallet From Previous Creation**
+```typescript
+// Skips re-uploading wallet data by referencing the create-wallet result
+{
+  testnet: true,
+  token: "rBTC",
+  walletCreationResult: "{\"walletsData\":{...}}" // the full JSON string returned by create-wallet, not a parsed object
+}
+```
+
+### 3. 💰 Balance Queries
 
 #### Tool: `check-balance`
 
@@ -326,7 +397,32 @@ You can continue the flow according to what you need to do.
 }
 ```
 
-### 3. 🔍 Transaction Tracking
+### 4. 💸 Token Transfers
+
+#### Tool: `transfer-tokens`
+
+Transfers rBTC or ERC20 tokens between wallets. Like `deploy-contract`, `confirmAction` is required on every call: pass `false` to get back a pending operation that must be confirmed via `confirm-operation` before anything executes; pass `true` only once a real person has approved the transfer.
+
+**Requirements:**
+- Recipient address
+- Amount (number, not string)
+- Wallet with sufficient funds
+- Token contract address (optional, omit for native rBTC)
+
+**Example:**
+```typescript
+{
+  testnet: true,
+  toAddress: "0x...", // recipient address
+  value: 0.01, // amount to transfer (number)
+  tokenAddress: "0x...", // optional, omit for native rBTC transfers
+  walletData: "my-wallets.json_content",
+  walletPassword: "wallet_password",
+  confirmAction: false // required on every call; false requires confirm-operation, true executes immediately
+}
+```
+
+### 5. 🔍 Transaction Tracking
 
 #### Tool: `check-transaction`
 
@@ -344,7 +440,26 @@ You can continue the flow according to what you need to do.
 - Transfer details
 - Timestamps
 
-### 4. 🚀 Contract Deployment
+### 6. 📊 Transaction History
+
+#### Tool: `check-transaction-history`
+
+Queries a wallet's transaction history using the Alchemy API.
+
+**Requirements:**
+- Alchemy API key (optional — falls back to a stored key if omitted)
+
+**Example:**
+```typescript
+{
+  testnet: true,
+  apiKey: "your-alchemy-api-key", // optional, uses a stored key if omitted
+  number: "10", // number of transactions to retrieve (string)
+  walletData: "my-wallets.json_content"
+}
+```
+
+### 7. 🚀 Contract Deployment
 
 #### Tool: `deploy-contract`
 
@@ -366,7 +481,7 @@ You can continue the flow according to what you need to do.
 }
 ```
 
-### 5. ✅ Contract Verification
+### 8. ✅ Contract Verification
 
 #### Tool: `verify-contract`
 
@@ -387,7 +502,7 @@ You can continue the flow according to what you need to do.
 }
 ```
 
-### 6. 📄 Contract Reading
+### 9. 📄 Contract Reading
 
 #### Tool: `read-contract`
 
@@ -409,7 +524,7 @@ You can continue the flow according to what you need to do.
 }
 ```
 
-### 7. 🌐 Supported Networks
+### 10. 🌐 Supported Networks
 
 #### Rootstock Mainnet
 - **RPC URL:** `https://public-node.rsk.co`
@@ -421,7 +536,7 @@ You can continue the flow according to what you need to do.
 - **Chain ID:** 31
 - **Explorer:** `https://explorer.testnet.rootstock.io`
 
-### 8. 🎯 Attestation Management
+### 11. 🎯 Attestation Management
 
 #### Available Attestation Tools:
 - `issue-attestation`: Create new attestations with a raw schema and encoded data

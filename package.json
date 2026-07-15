@@ -1,7 +1,8 @@
 {
   "name": "@rsksmart/rsk-mcp-server",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "MCP Server for Rootstock Blockchain",
+  "mcpName": "io.github.rsksmart/rsk-mcp-server",
   "keywords": [
     "mcp",
     "model-context-protocol",
@@ -15,7 +16,10 @@
     "rsk-cli",
     "attestation",
     "eas",
-    "schema"
+    "schema",
+    "web3",
+    "smart-contracts",
+    "ai-agent"
   ],
   "license": "MIT",
   "author": "Sebastian G",
