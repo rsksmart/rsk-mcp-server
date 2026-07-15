@@ -82,7 +82,7 @@ function cleanExpiredOperations(): void {
 export function createMcpServer(): McpServer {
   const server = new McpServer({
     name: "rsk-mcp-server",
-    version: "0.2.5",
+    version: "0.2.6",
   });
 
   return server;

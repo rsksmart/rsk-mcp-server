@@ -1,6 +1,6 @@
 {
   "name": "@rsksmart/rsk-mcp-server",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "MCP Server for Rootstock Blockchain",
   "keywords": [
     "mcp",
