@@ -1,3 +1,4 @@
+import { createRequire } from "module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { balanceCommand } from "@rsksmart/rsk-cli/dist/src/commands/balance.js";
@@ -64,6 +65,9 @@ interface PendingOperation {
   requiresConfirmation: boolean;
 }
 
+const require = createRequire(import.meta.url);
+const { version: packageVersion } = require("../package.json");
+
 const pendingOperations = new Map<string, PendingOperation>();
 
 function generateOperationId(): string {
@@ -82,7 +86,7 @@ function cleanExpiredOperations(): void {
 export function createMcpServer(): McpServer {
   const server = new McpServer({
     name: "rsk-mcp-server",
-    version: "0.2.6",
+    version: packageVersion,
   });
 
   return server;
