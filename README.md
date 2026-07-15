@@ -285,7 +285,7 @@ You can continue the flow according to what you need to do.
 - `confirm-operation`: Confirm and execute a pending operation using its operation ID
 - `cancel-operation`: Cancel and discard a pending operation using its operation ID
 
-**Why confirmation is needed:** Critical operations like `deploy-contract` and `transfer-tokens` don't execute immediately. They create a pending operation (expires after 5 minutes) that must be explicitly confirmed, so the AI client can't move funds or deploy contracts without your review.
+**Why confirmation is needed:** Critical operations like `deploy-contract` and `transfer-tokens` take a required `confirmAction` boolean. When it's omitted or `false`, the call creates a pending operation (expires after 5 minutes) instead of executing, and nothing happens on-chain until it's confirmed via `confirm-operation`. Passing `confirmAction: true` on the first call skips that pending step entirely — the tool descriptions themselves instruct AI agents not to do this until a real person has explicitly approved the action, so treat it as an escape hatch for already-approved automation, not the default flow.
 
 **List Pending Operations**
 ```typescript
@@ -361,7 +361,7 @@ You can continue the flow according to what you need to do.
 {
   testnet: true,
   token: "rBTC",
-  walletCreationResult: { /* the object returned by create-wallet */ }
+  walletCreationResult: "{\"walletsData\":{...}}" // the full JSON string returned by create-wallet, not a parsed object
 }
 ```
 
@@ -401,11 +401,11 @@ You can continue the flow according to what you need to do.
 
 #### Tool: `transfer-tokens`
 
-Transfers rBTC or ERC20 tokens between wallets. Like `deploy-contract`, this is a critical operation — the first call returns a pending operation that must be confirmed via `confirm-operation` before it executes.
+Transfers rBTC or ERC20 tokens between wallets. Like `deploy-contract`, `confirmAction` is required: omit it or pass `false` to get back a pending operation that must be confirmed via `confirm-operation` before anything executes; pass `true` only once a real person has approved the transfer.
 
 **Requirements:**
 - Recipient address
-- Amount
+- Amount (number, not string)
 - Wallet with sufficient funds
 - Token contract address (optional, omit for native rBTC)
 
@@ -414,10 +414,11 @@ Transfers rBTC or ERC20 tokens between wallets. Like `deploy-contract`, this is 
 {
   testnet: true,
   toAddress: "0x...", // recipient address
-  value: "0.01", // amount to transfer
+  value: 0.01, // amount to transfer (number)
   tokenAddress: "0x...", // optional, omit for native rBTC transfers
   walletData: "my-wallets.json_content",
-  walletPassword: "wallet_password"
+  walletPassword: "wallet_password",
+  confirmAction: false // omit or set false to require confirm-operation; true executes immediately
 }
 ```
 
@@ -446,14 +447,14 @@ Transfers rBTC or ERC20 tokens between wallets. Like `deploy-contract`, this is 
 Queries a wallet's transaction history using the Alchemy API.
 
 **Requirements:**
-- Alchemy API key
+- Alchemy API key (optional — falls back to a stored key if omitted)
 
 **Example:**
 ```typescript
 {
   testnet: true,
-  apiKey: "your-alchemy-api-key",
-  number: 10, // number of transactions to retrieve
+  apiKey: "your-alchemy-api-key", // optional, uses a stored key if omitted
+  number: "10", // number of transactions to retrieve (string)
   walletData: "my-wallets.json_content"
 }
 ```
