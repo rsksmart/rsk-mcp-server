@@ -173,6 +173,9 @@ jobs:
           tar xzf "${ASSET}" mcp-publisher
           test -x ./mcp-publisher
 
+      - name: Validate server.json
+        run: ./mcp-publisher validate server.json
+
       - name: Authenticate to MCP Registry
         run: ./mcp-publisher login github-oidc
 
