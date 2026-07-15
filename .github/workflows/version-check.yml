@@ -1,0 +1,33 @@
+name: Check server.json version sync
+
+on:
+  pull_request:
+    paths:
+      - package.json
+      - server.json
+
+permissions: read-all
+
+jobs:
+  check-version-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Verify package.json and server.json versions match
+        run: |
+          PKG_VERSION=$(jq -r .version package.json)
+          SERVER_VERSION=$(jq -r .version server.json)
+          PACKAGE_ENTRY_VERSION=$(jq -r '.packages[0].version' server.json)
+
+          echo "package.json version:            $PKG_VERSION"
+          echo "server.json version:             $SERVER_VERSION"
+          echo "server.json packages[0].version: $PACKAGE_ENTRY_VERSION"
+
+          if [ "$PKG_VERSION" != "$SERVER_VERSION" ] || [ "$PKG_VERSION" != "$PACKAGE_ENTRY_VERSION" ]; then
+            echo "::error::server.json version(s) do not match package.json ($PKG_VERSION). Bump server.json's \"version\" and \"packages[0].version\" fields to match before merging."
+            exit 1
+          fi
+
+          echo "Versions are in sync."
